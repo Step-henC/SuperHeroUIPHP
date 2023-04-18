@@ -3,7 +3,7 @@
 require_once 'Superheromodel.php';
 
 
-$id= "";
+$id= 0; //db handles Id, we just need to save an integer
 $name = "";
 $firstName = "";
 $lastName = "";
@@ -12,63 +12,68 @@ $place = "";
 $errorMessage = "";
 $successMessage = "";
 
-if ( $_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id = $_POST["id"];
+if ( isset($_POST["submit"])) {
+    
     $name = $_POST["name"];
     $firstName = $_POST["lastName"];
     $lastName = $_POST["lastName"];
     $place = $_POST["place"];
 
 
+
     do {
-        if ( empty($id) || empty($name) || empty($firstName) || empty($lastName) || empty($place) ) {
+        if ( empty($name) || empty($firstName) || empty($lastName) || empty($place) ) {
             $errorMessage = "All the fields are required";
             break;
         }
+// if(empty($_SERVER['CONTENT_TYPE']))
+// { 
+//   $_SERVER['CONTENT_TYPE'] = "application/x-www-form-urlencoded"; 
+// }
+      
 
         function curl_create_content($url, $data)
         {
           $ch = curl_init($url);
 
-          curl_setopt($ch, CURLOPT_URL, $url);
-          //curl_setopt($ch, CURLOPT_HTTPHEADER, 
-          //array(
-        //     'Host: http://localhost/SuperHeroUI.PHP/createHero.php',
-        //     'Content-Type: application/x-www-form-urlencoded',
-        // ));
-        curl_setopt($ch, CURLOPT_POST, true);
+          echo $data;
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+    
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "accept: text/plain",
+            "Content-Type: application/json"
+        ]);
         if ($data)
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    
-        //   curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        //   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        //   curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-          
-          
-          
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+
           $result = curl_exec($ch);
-    
-          if(!$result) {
-            echo("Connection failure!");
-        }
+          $errors = curl_error($ch);
+           if(!$result) {
+            echo $errors;
+         }
           curl_close($ch);
           return $result;
         }
 
         $hero = new SuperHero($id, $name, $firstName, $lastName, $place);
 
+        
 
-        $curlResult = curl_create_content('https://localhost:7046/api/SuperHero/', json_encode($hero));
+        $curlResult = curl_create_content("https://localhost:7046/api/SuperHero/add", json_encode($hero));
 
 
         //check if query exe was successfull 
         if (!$curlResult) {
-            $errorMessage = "Invalid query:";
+            $errorMessage = "Invalid query: ";
         }
 
         //add new client to database
-        $id = "";
         $name = "";
         $email = "";
         $phone = "";
@@ -76,11 +81,10 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $successMessage = "Client added correctly";
 
-        header("location: /SuperHeroUI.PHP/index.php");
-        exit;
+        // header("location: /SuperHeroUI.PHP/index.php");
+        // exit;
 
     } while (false);
-
 }
 
 ?>
@@ -115,13 +119,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST') {
             
             ?>
 
-            <form method="post">
-            <div class="row mb-3">
-                    <label class="col-sm-3 col-form-label">Id</label>
-                        <div class="clo-sm-6">  <!-- have to add an id for this db -->
-                            <input type="text" class="form-control" name="id" value="<?php echo $id?>"> 
-                        </div>
-                </div>
+            <form method="POST"> <!-- capitlizing Post made a difference -->
                 <div class="row mb-3">
                     <label class="col-sm-3 col-form-label">Name</label>
                         <div class="clo-sm-6">  
@@ -166,7 +164,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 <div class="row mb-3">
                     <div class="offset-sm-3 col-sm-3 d-grid">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <input type="submit" name="submit" value="Submit" class="btn btn-primary">
                     </div>
                         <div class="col-sm-3 d-grid"> 
                             <a class="btn btn-outline-primary" href="/SuperHeroUI.PHP/index.php" role="button">Cancel</a>

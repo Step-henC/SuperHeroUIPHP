@@ -62,7 +62,6 @@ else {
 
     function curl_set_content($url, $data)
     {
-        echo $data;
       $ch = curl_init($url);
 
       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -95,7 +94,7 @@ else {
     
         $result = curl_set_content("https://localhost:7046/api/SuperHero/", json_encode($hero));
 
-
+            echo $result;
         //check if query exe was successfull 
         if (!$result) {
             $errorMessage = "Invalid query: ";
