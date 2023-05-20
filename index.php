@@ -1,3 +1,8 @@
+<?php 
+session_start();
+
+if(isset($_SESSION['id']) && isset($_SESSION['user_name'])) {
+    ?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -24,6 +29,13 @@
                 </tr>
                 </thead>
                 <tbody>
+    <?php
+}
+else {
+    header("Location: start.php");
+    exit();
+} 
+?>
                     <?php 
 
 function curl_get_contents($url)
@@ -66,6 +78,7 @@ $responses = curl_get_contents($url);
                         <td>
                         <a class='btn btn-primary btn-sm' href='/SuperHeroUI.PHP/editHero.php?id=$hero[id]'>Edit</a>
                         <a class='btn btn-danger btn-sm' href='/SuperHeroUI.PHP/deleteHero.php?id=$hero[id]'>Delete</a>
+                       
                     </td>
                 </tr>
                         ";
@@ -73,6 +86,7 @@ $responses = curl_get_contents($url);
                     ?>
                 </tbody>
              </table>
+             <a class='btn btn-primary btn-sm' href='/SuperHeroUI.PHP/logout.php'>Logout</a>
         </div>
         
       

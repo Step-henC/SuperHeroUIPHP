@@ -15,7 +15,7 @@ $successMessage = "";
 if ( isset($_POST["submit"])) {
     
     $name = $_POST["name"];
-    $firstName = $_POST["lastName"];
+    $firstName = $_POST["firstName"];
     $lastName = $_POST["lastName"];
     $place = $_POST["place"];
 
