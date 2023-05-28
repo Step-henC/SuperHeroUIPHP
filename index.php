@@ -32,8 +32,9 @@ if(isset($_SESSION['id']) && isset($_SESSION['user_name'])) {
     <?php
 }
 else {
-    header("Location: start.php");
-    exit();
+    echo "uh Oh";
+    // header("Location: start.php");
+    // exit();
 } 
 ?>
                     <?php 
